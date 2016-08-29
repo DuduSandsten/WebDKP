@@ -1,7 +1,7 @@
 -----------------------------------------------
 WEB DKP ADDON
 -----------------------------------------------
-Created by ZeddZorandor of Stromscale
+Originally Created by ZeddZorandor of Stromscale
 
 Description:
 The webdkp addon is used together with the site
@@ -22,9 +22,28 @@ For help with the addon, check out the tutorial at:
 http://www.webdkp.com/index.php?view=tutorial
 
 
+Type into chat:
+!startbid [Item Link]
+
+To start dkp bidding
 
 ~~~~~~~~~~~~~~~~~~~~~~
-NEW FEATURES
+SANDSTEN CHANGELOG
+~~~~~~~~~~~~~~~~~~~~~~
+2016-08-29
+  Added ability to reward custom dkp so that the winner of a bid can be awarded anything entered.
+  This way a DKP system using Vickrey Auction system (a.k.a. "Second-price sealed bid auction")
+
+  The bench feature implemented by Tzui appears to not work all the time.
+  !bench dkp
+  !bench dkp Player
+  
+  To add any player to the bench list type
+  !bench add Player
+
+
+~~~~~~~~~~~~~~~~~~~~~~
+OLD FEATURES
 ~~~~~~~~~~~~~~~~~~~~~~
 - Complete overhaul of the addon from version 1. 
 - GUI interface changed to show a live view of DKP in game
