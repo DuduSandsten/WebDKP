@@ -24,6 +24,13 @@ function WebDKP_Bench_ToggleUI()
 	end
 end
 
+function WebDKP_FixNegative_ToggleUI()
+	--Updates the information about the online guildies
+	GuildRoster();
+	--Fix negative dkp
+	WebDKP_FixNegative();
+end
+
 function WebDKP_Bench_HandleMouseOver()
 	local playerName = getglobal(this:GetName().."Name"):GetText();
 	local selected = WebDKP_Bench_IsSelected(playerName);

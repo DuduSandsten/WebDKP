@@ -140,7 +140,7 @@ NAXX = Set {"Anub'Rekhan", "Grand Widow Faerlina", "Maexxna",
 
 test_loc = Set {"Elder Mottled Boar"}
 
-BossLocation = Set {"Durotar", "The Molten Core", "Blackwing Lair", "Onyxia's Lair", "Temple of Ahn'Qiraj", "Naxxramas", "The Arachnid Quarter", "The Plague Quarter", "The Military Quarter", "The Construct Quarter", "Frostwyrm Lair"}
+BossLocation = Set {"Durotar", "The Molten Core", "Blackwing Lair", "Onyxia's Lair", "Ahn'Qiraj", "Temple of Ahn'Qiraj", "Naxxramas", "The Arachnid Quarter", "The Plague Quarter", "The Military Quarter", "The Construct Quarter", "Frostwyrm Lair"}
 
 
 ---------------------------------------------------
@@ -1021,6 +1021,7 @@ function WebDKP_MinimapDropDown_Initialize()
 	WebDKP_Add_MinimapDropDownItem("DKP Table",WebDKP_ToggleGUI);
 	WebDKP_Add_MinimapDropDownItem("Bidding",WebDKP_Bid_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Bench",WebDKP_Bench_ToggleUI);
+	WebDKP_Add_MinimapDropDownItem("Fix Negative",WebDKP_FixNegative_ToggleUI);
 	--WebDKP_Add_MinimapDropDownItem("Help",WebDKP_ToggleGUI);
 end
 

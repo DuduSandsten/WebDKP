@@ -30,9 +30,13 @@ To start dkp bidding
 ~~~~~~~~~~~~~~~~~~~~~~
 SANDSTEN CHANGELOG
 ~~~~~~~~~~~~~~~~~~~~~~
+2016-12-19
+  Fixed DKP not giving awarded automatically in AQ40
+  Added the minimap icon command Fix negative DKP
+
 2016-08-29
   Added ability to reward custom dkp so that the winner of a bid can be awarded anything entered.
-  This way a DKP system using Vickrey Auction system (a.k.a. "Second-price sealed bid auction")
+  This way you can use a DKP system using Vickrey Auction system (a.k.a. "Second-price sealed bid auction")
 
   The bench feature implemented by Tzui appears to not work all the time.
   !bench dkp
