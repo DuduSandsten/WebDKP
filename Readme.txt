@@ -30,6 +30,9 @@ To start dkp bidding
 ~~~~~~~~~~~~~~~~~~~~~~
 SANDSTEN CHANGELOG
 ~~~~~~~~~~~~~~~~~~~~~~
+2017-01-23
+  Added feature to give out a specified flat decay to every player.
+
 2016-12-19
   Fixed DKP not giving awarded automatically in AQ40
   Added the minimap icon command Fix negative DKP

@@ -46,6 +46,34 @@ function WebDKP_AwardItem_Event()
 	end
 end
 
+---Sandsten added to give out decay easily
+function WebDKP_GiveOutDecayToAll(cost)
+	if cost ~= nil then
+		local reason = "DECAY"
+		local decay = cost * -1
+		local player = WebDKP_GetAllPlayers()
+		local numPlayers = table.getn(player)
+
+		if ( player == nil) then
+			WebDKP_Print("No player on DKP list --> No decay given.")
+			PlaySound("igQuestFailed")
+		elseif(WebDKP_Bench_TotalToday == 0) then
+			WebDKP_Print("No DKP earned today --> No decay given.")
+			PlaySound("igQuestFailed")
+		else
+			
+			for i=0, numPlayers, 1 do
+				WebDKP_Bench_AddDKP(player[i]["name"], decay, reason);
+			end
+			DEFAULT_CHAT_FRAME:AddMessage("Added Decay ( "..decay.." DKP ) to "..numPlayers.." players.")
+
+			-- Update the table so we can see the new dkp status
+			WebDKP_UpdateTableToShow()
+			WebDKP_UpdateTable()
+		end
+	end
+end
+
 function WebDKP_DecayToAll()
 	local reason = "DECAY";
 	local cost = WebDKP_Bench_TotalToday * 0.2;

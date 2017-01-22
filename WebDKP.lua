@@ -319,6 +319,37 @@ function string:split(delimiter)
   return result
 end
 
+--Sandsten giveout decay to all
+function WebDKP_GiveoutDecayDialogBox_ToggleUI()
+	StaticPopupDialogs["GIVEOUT_DKP_TO_ALL_PROMPT"] = {
+		text = "How much decay do you want to subtract?\n\nThis will subtract from every player.\n If this results in negative DKP the players total will be set to zero.",
+	  	button1 = "Confirm",
+	  	button2 = "Cancel",
+		
+		OnShow = function()
+			getglobal(this:GetName().."EditBox"):SetFocus()
+			getglobal(this:GetName().."EditBox"):SetText("45")
+			getglobal(this:GetName().."EditBox"):HighlightText()
+		end,
+		
+	  	OnAccept = function()
+			local text = getglobal(this:GetParent():GetName().."EditBox"):GetText()
+			if text ~= "" then
+				-- Do Decay before clearing bench aka total dkp today
+				WebDKP_GiveOutDecayToAll(text)
+				-- Set all players with negative DKP to 0 
+				WebDKP_FixNegative()
+			end
+	  	end,
+	  	timeout = 0,
+	  	hasEditBox = true,
+	  	whileDead = true,
+	  	hideOnEscape = true,
+	  	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
+	StaticPopup_Show ("GIVEOUT_DKP_TO_ALL_PROMPT")
+end
+
 
 function WebDKP_Bosskill()
 	StaticPopupDialogs["HANDOUT_BOSSDKP_PROMPT"] = {
@@ -1020,8 +1051,9 @@ end
 function WebDKP_MinimapDropDown_Initialize()
 	WebDKP_Add_MinimapDropDownItem("DKP Table",WebDKP_ToggleGUI);
 	WebDKP_Add_MinimapDropDownItem("Bidding",WebDKP_Bid_ToggleUI);
-	WebDKP_Add_MinimapDropDownItem("Bench",WebDKP_Bench_ToggleUI);
-	WebDKP_Add_MinimapDropDownItem("Fix Negative",WebDKP_FixNegative_ToggleUI);
+	WebDKP_Add_MinimapDropDownItem("Bench (beta-broken)",WebDKP_Bench_ToggleUI);
+	WebDKP_Add_MinimapDropDownItem("Add decay flat",WebDKP_GiveoutDecayDialogBox_ToggleUI);
+	WebDKP_Add_MinimapDropDownItem("Fix Negative DKP",WebDKP_FixNegative_ToggleUI);
 	--WebDKP_Add_MinimapDropDownItem("Help",WebDKP_ToggleGUI);
 end
 
