@@ -57,9 +57,6 @@ function WebDKP_GiveOutDecayToAll(cost)
 		if ( player == nil) then
 			WebDKP_Print("No player on DKP list --> No decay given.")
 			PlaySound("igQuestFailed")
-		elseif(WebDKP_Bench_TotalToday == 0) then
-			WebDKP_Print("No DKP earned today --> No decay given.")
-			PlaySound("igQuestFailed")
 		else
 			
 			for i=0, numPlayers, 1 do
