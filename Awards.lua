@@ -49,7 +49,7 @@ end
 ---Sandsten added to give out decay easily
 function WebDKP_GiveOutDecayToAll(cost)
 	if cost ~= nil then
-		local reason = "DECAY"
+		local reason = "Decay"
 		local decay = cost * -1
 		local player = WebDKP_GetAllPlayers()
 		local numPlayers = table.getn(player)
@@ -98,7 +98,7 @@ function WebDKP_DecayToAll()
 end
 
 function WebDKP_FixNegative()
-	local reason = "FIX_NEGATIVE_AFTER_RAID";
+	local reason = "Fix Negative DKP";
 	local player = WebDKP_GetAllPlayers();
 	local numPlayers = table.getn(player);
 
