@@ -97,6 +97,7 @@ function WebDKP_DecayToAll()
 	end
 end
 
+
 function WebDKP_FixNegative()
 	local reason = "Fix Negative DKP";
 	local player = WebDKP_GetAllPlayers();
@@ -111,7 +112,11 @@ function WebDKP_FixNegative()
 			local dkpNow = WebDKP_GetDKP(player[i]["name"]);
 			local toAward = -1 * dkpNow;
 			if(dkpNow < 0) then
-				WebDKP_Bench_AddDKP(player[i]["name"], toAward, reason);
+				--This needs to be updated
+				--WebDKP_Bench_AddDKP(player[i]["name"], toAward, reason)
+				--Print("adding player "..player[i]["name"])
+				WebDKP_AddDKPflat(toAward, reason, "false", player[i]["name"], i)
+				WebDKP_UpdateTable();
 				count = count + 1;
 			end
 		end
@@ -122,6 +127,66 @@ function WebDKP_FixNegative()
 		WebDKP_UpdateTable();
 	end
 end
+
+--Sandsten new add dkp negative function
+-- index is added to create unique entries, otherwise all entries are merged as they are created the same second
+function WebDKP_AddDKPflat(toAward, reason, forItem, playerName, index)
+    --players replace with player
+	local date  = date("%Y-%m-%d %H:%M:%S");
+	local location = GetZoneText();
+	local tableid = WebDKP_GetTableid();
+	local awardedBy = UnitName("player");
+	local playerClass = WebDKP_GetPlayerClass(playerName);
+	local playerGuild = WebDKP_GetGuildName(playerName)
+	
+	if (not WebDKP_Log) then
+		WebDKP_Log = {};
+	end
+	if (not WebDKP_Log["Version"]) then
+		WebDKP_Log["Version"] = "2";
+	end
+	-- make sure this player is in the log
+	if (not WebDKP_Log[reason..index.." "..date]) then
+		WebDKP_Log[reason..index.." "..date] = {};	
+		WebDKP_Log[reason..index.." "..date]["reason"] = reason.." "..index;
+		WebDKP_Log[reason..index.." "..date]["date"] = date;
+		WebDKP_Log[reason..index.." "..date]["foritem"] = "false";
+		WebDKP_Log[reason..index.." "..date]["zone"] = location;
+		WebDKP_Log[reason..index.." "..date]["tableid"] = tableid;
+		WebDKP_Log[reason..index.." "..date]["awardedby"] = awardedBy;
+		WebDKP_Log[reason..index.." "..date]["points"] = toAward;
+		WebDKP_Log[reason..index.." "..date]["awarded"] = {};
+	end
+
+
+	-- is this a new person we havn't seen before?
+	if ( WebDKP_DkpTable[playerName] == nil) then
+		-- new person, they need to be added
+		local playerDkp = 0;
+		local playerTier = 0;
+		-- go ahead and add them to our dkp table now, for future reference
+		if( not (playerName == nil) ) then
+			WebDKP_DkpTable[playerName] = {
+				["dkp_"..tableid] = 0,
+				["class"] = playerClass,
+			}
+		end
+	end
+			
+			
+	WebDKP_Log[reason..index.." "..date]["awarded"][playerName] = {};
+	WebDKP_Log[reason..index.." "..date]["awarded"][playerName]["name"]=playerName;
+	WebDKP_Log[reason..index.." "..date]["awarded"][playerName]["guild"]=playerGuild;
+	WebDKP_Log[reason..index.." "..date]["awarded"][playerName]["class"]=playerClass;
+
+	WebDKP_AddDKPToTable(playerName, playerClass, toAward)
+	
+	WebDKP_UpdateTableToShow();
+	WebDKP_UpdateTable();
+end
+
+
+
 
 -- ================================
 -- Called when user clicks on 'award dkp' on the award 
@@ -157,6 +222,8 @@ function WebDKP_AwardDKP_Event()
 		WebDKP_UpdateTable();
 	end
 end
+
+
 
 
 
