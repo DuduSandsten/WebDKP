@@ -1,3 +1,7 @@
+-- Sandstens fork
+SandstensForkVersion = "Version 2017-02-16"
+--
+--
 ------------------------------------------------------------------------
 -- WEB DKP
 ------------------------------------------------------------------------
@@ -955,6 +959,10 @@ function WebDKP_MinimapButton_UpdateDragPosition()
 	-- Set the new position
 	
 	WebDKP_MinimapButton_SetPositionAngle(vAngle);
+	
+	--Sandsten edit, and remember it ofc... stoopid
+	WebDKP_Options["MiniMapButtonAngle"] = vAngle;
+	
 end
 
 -- ================================
@@ -1021,6 +1029,23 @@ function WebDKP_MinimapButton_SetPositionAngle(pAngle)
 	vCenterY = math.cos(vAngle) * vRadius;
 	
 	WebDKP_MinimapButton:SetPoint("CENTER", "Minimap", "CENTER", vCenterX - 1, vCenterY - 1);
+	WebDKP_MinimapButton:SetFrameStrata("MEDIUM")
+	
+	
+
+	
+	--sandsten add a tooltip showing version
+	WebDKP_MinimapButton:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(WebDKP_MinimapButton, "ANCHOR_LEFT");
+		GameTooltip:SetText("WebDKP");
+		GameTooltip:AddLine("Sandstens fork",1,1,1);
+		GameTooltip:AddLine(SandstensForkVersion,1,1,1);
+		GameTooltip:Show()
+	end)
+	
+	WebDKP_MinimapButton:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
 	
 	WebDKP_Options["MiniMapButtonAngle"] = vAngle;
 	--gOutfitter_Settings.Options.MinimapButtonAngle = vAngle;
@@ -1054,7 +1079,12 @@ function WebDKP_MinimapDropDown_Initialize()
 	WebDKP_Add_MinimapDropDownItem("Bench (beta-broken)",WebDKP_Bench_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Add decay flat",WebDKP_GiveoutDecayDialogBox_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Fix Negative DKP",WebDKP_FixNegative_ToggleUI);
+	WebDKP_Add_MinimapDropDownItem("Morale boost!",WebDKP_MoraleBoost);
 	--WebDKP_Add_MinimapDropDownItem("Help",WebDKP_ToggleGUI);
+end
+
+function WebDKP_MoraleBoost()
+	PlaySoundFile("Interface\\AddOns\\WebDKP\\morale.mp3")
 end
 
 -- ================================

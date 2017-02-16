@@ -1,7 +1,7 @@
 ## Interface: 20000
 ## Title: WebDKP
 ## Notes: An addon that allows you to easily record DKP for guilds in game. 
-## Author: ZeddZorandor
+## Author: ZeddZorandor fork by Sandsten version 2017-02-16
 ## Version: 2
 ## X-Category: Guild Raid
 ## SavedVariables: WebDKP_Options, WebDKP_Log, WebDKP_DkpTable, WebDKP_Tables, WebDKP_Loot, WebDKP_WebOptions, WebDKP_BenchList, WebDKP_Bench_TotalToday
