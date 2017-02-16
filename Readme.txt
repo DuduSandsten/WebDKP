@@ -1,5 +1,5 @@
 -----------------------------------------------
-WEB DKP ADDON
+WEBDKP fork by Sandsten
 -----------------------------------------------
 Originally Created by ZeddZorandor of Stromscale
 
@@ -8,14 +8,12 @@ The webdkp addon is used together with the site
 www.webdkp.com to help guild leaders manage thier
 dkp. 
 
-
 ~~~~~~~~~~~~~~~~~~~~~~
 HOW TO USE:
 ~~~~~~~~~~~~~~~~~~~~~~
 
 For help with the addon, check out the tutorial at:
 https://nirklars.wordpress.com/wow/addon-webdkp-fork/
-
 
 Type into chat:
 !startbid [Item Link]
@@ -25,6 +23,11 @@ To start dkp bidding
 ~~~~~~~~~~~~~~~~~~~~~~
 SANDSTEN CHANGELOG
 ~~~~~~~~~~~~~~~~~~~~~~
+2017-02-16
+  Fixed minimap position not being saved
+  Added tooltip with version info of the fork so you know which one youre running.
+  Added easter egg “Morale boost!”
+
 2017-01-23
   Added feature to give out a specified flat decay to every player.
 
