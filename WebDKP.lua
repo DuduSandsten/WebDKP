@@ -1,5 +1,5 @@
 -- Sandstens fork
-SandstensForkVersion = "Version 2017-02-16"
+SandstensForkVersion = "Version 2017-03-13"
 --
 --
 ------------------------------------------------------------------------
@@ -1066,7 +1066,7 @@ end
 -- Initializes the minimap drop down
 -- ================================
 function WebDKP_MinimapDropDown_OnLoad()
-	UIDropDownMenu_SetAnchor(-2, -20, this, "TOPRIGHT", this:GetName(), "TOPLEFT");
+	UIDropDownMenu_SetAnchor(10, -20, this, "TOPLEFT", this:GetName(), "TOPRIGHT");
 	UIDropDownMenu_Initialize(this, WebDKP_MinimapDropDown_Initialize);
 end
 
