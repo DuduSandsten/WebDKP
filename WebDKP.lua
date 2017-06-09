@@ -1,5 +1,6 @@
 -- Sandstens fork
-SandstensForkVersion = "Version 2017-03-13"
+SandstensForkVersion = "Version 2017-06-09"
+AutoInvitePlayers = {"Sandsten","Bernsten","Smygsten","Stenskott","Bergsten","Kylsten","Gravsten","Sandybank","Kalven","Sandybank","Tentto","Gruuz","Looz","Larona","Pricey"}
 --
 --
 ------------------------------------------------------------------------
@@ -73,6 +74,8 @@ WebDKP_BenchTable = {}; -- Not in use ?
 
 WebDKP_BenchList = {};
 WebDKP_Bench_TotalToday = 0;
+
+WebDKP_Enabled = true; --default value enabled
 
 -- Holds the list of users tables on the site. This is used for those guilds
 -- who have multiple dkp tables for 1 guild. 
@@ -304,9 +307,13 @@ function auto_inv()
 	local f = CreateFrame("frame")
 	f:RegisterEvent("CHAT_MSG_WHISPER")
 	f:SetScript("OnEvent", function()
-    	if ( arg1 == "loterk" ) then
-        	InviteByName(arg2)
- 	  	end
+    	
+		for i=1,getn(AutoInvitePlayers) do
+			if (arg1==AutoInvitePlayers[i]) then
+				InviteByName(arg2)
+			end
+		end
+		
 	end)
 end
 
@@ -417,24 +424,26 @@ function WebDKP_AddEarly()
 end
 
 function WebDKP_Bosskill_Event()
-	--if IsPartyLeader("player") then
-		local zoneName = GetZoneText();
+	if(WebDKP_Enabled) then
+		--if IsPartyLeader("player") then
+			local zoneName = GetZoneText();
 
-		-- Getting killed boss name --
-		local name = ""
-		local list = string.split(arg1, " dies.")
-		if (list) then
-			name = list[1]
-		end
+			-- Getting killed boss name --
+			local name = ""
+			local list = string.split(arg1, " dies.")
+			if (list) then
+				name = list[1]
+			end
 
-		if BossLocation[zoneName] then
-	    	if (MC[name] or BWL[name] or name == "Onyxia" or AQ[name] or NAXX[name] or test_loc[name])then
-	    		WebDKP_Bosskill_Add_DKP();
-	    		--WebDKP_Bench_Add_DKP();
-	    		--DEFAULT_CHAT_FRAME:AddMessage("test, ADDING DKP 5 all raid! yey")
-	    	end
-	    end
-	--end
+			if BossLocation[zoneName] then
+				if (MC[name] or BWL[name] or name == "Onyxia" or AQ[name] or NAXX[name] or test_loc[name])then
+					WebDKP_Bosskill_Add_DKP();
+					--WebDKP_Bench_Add_DKP();
+					--DEFAULT_CHAT_FRAME:AddMessage("test, ADDING DKP 5 all raid! yey")
+				end
+			end
+		--end
+	end
 end
 
 
@@ -1040,6 +1049,11 @@ function WebDKP_MinimapButton_SetPositionAngle(pAngle)
 		GameTooltip:SetText("WebDKP");
 		GameTooltip:AddLine("Sandstens fork",1,1,1);
 		GameTooltip:AddLine(SandstensForkVersion,1,1,1);
+		if(WebDKP_Enabled) then
+			GameTooltip:AddLine("AutoAward bosskills is Enabled",0,1,0);
+		else
+			GameTooltip:AddLine("AutoAward bosskills is Disabled",1,0,0);
+		end
 		GameTooltip:Show()
 	end)
 	
@@ -1080,11 +1094,24 @@ function WebDKP_MinimapDropDown_Initialize()
 	WebDKP_Add_MinimapDropDownItem("Add decay flat",WebDKP_GiveoutDecayDialogBox_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Fix Negative DKP",WebDKP_FixNegative_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Morale boost!",WebDKP_MoraleBoost);
+	WebDKP_Add_MinimapDropDownItem("AutoAward bosskill - On/Off",WebDKP_AutoAwardToggle);
 	--WebDKP_Add_MinimapDropDownItem("Help",WebDKP_ToggleGUI);
 end
 
 function WebDKP_MoraleBoost()
 	PlaySoundFile("Interface\\AddOns\\WebDKP\\morale.mp3")
+end
+
+function WebDKP_AutoAwardToggle()
+	if(WebDKP_Enabled) then
+		WebDKP_Enabled = false
+		WebDKP_Print("AutoAward for bosskill is now disabled.")
+		WebDKP_MinimapButton:SetNormalTexture("Interface\\AddOns\\WebDKP\\\Textures\\MinimapButton_disabled")
+	else
+		WebDKP_Enabled = true
+		WebDKP_Print("AutoAward for bosskill is now enabled.")
+		WebDKP_MinimapButton:SetNormalTexture("Interface\\AddOns\\WebDKP\\\Textures\\MinimapButton")
+	end
 end
 
 -- ================================
