@@ -307,8 +307,8 @@ function auto_inv()
 	local f = CreateFrame("frame")
 	f:RegisterEvent("CHAT_MSG_WHISPER")
 	f:SetScript("OnEvent", function()
-		if UnitInRaid("player") then
-			if(arg1 == "+") then
+		if(arg1 == "+") then
+			if UnitInRaid("player") then
 				for i=1,getn(AutoInvitePlayers) do
 					if (arg2==AutoInvitePlayers[i]) then
 						InviteByName(arg2)
