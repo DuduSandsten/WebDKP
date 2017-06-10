@@ -307,13 +307,13 @@ function auto_inv()
 	local f = CreateFrame("frame")
 	f:RegisterEvent("CHAT_MSG_WHISPER")
 	f:SetScript("OnEvent", function()
-    	
-		for i=1,getn(AutoInvitePlayers) do
-			if (arg1==AutoInvitePlayers[i]) then
-				InviteByName(arg2)
+		if(arg1 == "+") then
+			for i=1,getn(AutoInvitePlayers) do
+				if (arg2==AutoInvitePlayers[i]) then
+					InviteByName(arg2)
+				end
 			end
 		end
-		
 	end)
 end
 
