@@ -1,6 +1,6 @@
 -- Sandstens fork
-SandstensForkVersion = "Version 2017-06-09"
-AutoInvitePlayers = {"Sandsten","Bernsten","Smygsten","Stenskott","Bergsten","Kylsten","Gravsten","Sandybank","Kalven","Ibanezer","Arkemea","Tentto","Gruuz","Looz","Larona","Pricey","Orthoron","Valkoron"}
+SandstensForkVersion = "Version 2017-06-10"
+AutoInvitePlayers = {"Sandsten","Bernsten","Smygsten","Stenskott","Bergsten","Kylsten","Gravsten","Sandybank","Kalven","Ibanezer","Arkemea","Tentto","Gruuz","Looz","Larona","Pricey","Orthoron","Valkoron","Awsomenews","Hurmelhej","Kimono","Cadux","Roxigar","Myname","Thralloron","Kalvoron","Nakz"}
 --
 --
 ------------------------------------------------------------------------
@@ -307,10 +307,13 @@ function auto_inv()
 	local f = CreateFrame("frame")
 	f:RegisterEvent("CHAT_MSG_WHISPER")
 	f:SetScript("OnEvent", function()
-		if(arg1 == "+") then
-			for i=1,getn(AutoInvitePlayers) do
-				if (arg2==AutoInvitePlayers[i]) then
-					InviteByName(arg2)
+		if UnitInRaid("player") then
+			if(arg1 == "+") then
+				for i=1,getn(AutoInvitePlayers) do
+					if (arg2==AutoInvitePlayers[i]) then
+						InviteByName(arg2)
+						PromoteToAssistant(arg2)
+					end
 				end
 			end
 		end
