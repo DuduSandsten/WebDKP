@@ -30,6 +30,22 @@ To start dkp bidding
 ~~~~~~~~~~~~~~~~~~~~~~
 SANDSTEN CHANGELOG
 ~~~~~~~~~~~~~~~~~~~~~~
+
+2017-09-20
+  !startbid commands were not being ignored when disabling. Fixed
+  Added auto invite feature to automatically invite guild members with the rank "Officer", "Class Leader" or "Officer alt".
+  Added auto invite for some player names. (Only works on Kronos)
+
+2017-06-09
+  Added AutoAward toggle to the minimap icon menu! Thanks to Tzui. Icon goes black and white if disabled. Now you don’t need to reloadui anymore!
+
+
+2017-02-16
+  Fixed minimap position not being saved.webdkp-version
+  Added tooltip with version info of the fork so you know which one youre running.
+  Added easter egg “Morale boost!” ??
+
+
 2017-01-23
   Added feature to give out a specified flat decay to every player.
 

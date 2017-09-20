@@ -273,54 +273,56 @@ end
 -- placing a bid and remotly starting / stopping a bid.
 -- ================================
 function WebDKP_Bid_Event()
-	local name = arg2;
-	local trigger = arg1;
-	if(WebDKP_IsBidChat(name,trigger)) then
-		
-
-
-		--local cmd, subcmd = WebDKP_GetCmd(trigger);
-		local _, cmd = WebDKP_GetCmd(trigger);
-		--cmd, subcmd = WebDKP_GetCommaCmd(subcmd);  // makes an error for legendary
-
-		
-	
-		-- SOMEONE HAS PLACED A BID
-		if(string.find(string.lower(trigger), "!bid")==1 ) then	
-			local cmdList = string.split(cmd, " ");
-
-			if(WebDKP_bidInProgress == false) then
-				WebDKP_SendWhisper(name,"There is not a bid session active atm");
-			elseif(cmd == "") then
-				WebDKP_SendWhisper(name,"You did not specify bid amount - bid not accepted");
-			else
-				local bidAmount = cmdList[1] + 0;
-				--local textAfterBid = cmdList[2];
-				WebDKP_Bid_HandleBid(name,bidAmount);
-				WebDKP_SendWhisper(name,"Bid for "..bidAmount.." dkp is accepted!");
-			end	
+	if(WebDKP_Options["WebDKP_Enabled"]) then
+		local name = arg2;
+		local trigger = arg1;
+		if(WebDKP_IsBidChat(name,trigger)) then
 			
+
+
+			--local cmd, subcmd = WebDKP_GetCmd(trigger);
+			local _, cmd = WebDKP_GetCmd(trigger);
+			--cmd, subcmd = WebDKP_GetCommaCmd(subcmd);  // makes an error for legendary
+
 			
-		-- THEY WANT THE BIDDING TO START
-		elseif(string.find(string.lower(trigger), "!startbid")==1 ) then
+		
+			-- SOMEONE HAS PLACED A BID
+			if(string.find(string.lower(trigger), "!bid")==1 ) then	
+				local cmdList = string.split(cmd, " ");
 
-
-			if (WebDKP_bidInProgress == true ) then
-				WebDKP_SendWhisper(name,"There is already a bid session active - you can't start a new before the other is finished");
-			elseif ( cmd == "" or cmd == nil) then
-				WebDKP_SendWhisper(name,"You must specify an item to bid on. Ex: !startbid [Giantstalker's Helm]");
-			else	
-				WebDKP_Bid_StartBid(cmd, 0);
-				WebDKP_BidFrameBidButton:SetText("Stop bidding");
-			end
+				if(WebDKP_bidInProgress == false) then
+					WebDKP_SendWhisper(name,"There is not a bid session active atm");
+				elseif(cmd == "") then
+					WebDKP_SendWhisper(name,"You did not specify bid amount - bid not accepted");
+				else
+					local bidAmount = cmdList[1] + 0;
+					--local textAfterBid = cmdList[2];
+					WebDKP_Bid_HandleBid(name,bidAmount);
+					WebDKP_SendWhisper(name,"Bid for "..bidAmount.." dkp is accepted!");
+				end	
 				
-		-- THEY WANT THE BIDDING TO STOP	
-		elseif(string.find(string.lower(trigger), "!stopbid")==1 ) then
-			if (WebDKP_bidInProgress == false ) then
-				WebDKP_SendWhisper(name,"There are no active bid session to abort");
-			else
-				WebDKP_Bid_StopBid();
-				WebDKP_BidFrameBidButton:SetText("Start bidding!");
+				
+			-- THEY WANT THE BIDDING TO START
+			elseif(string.find(string.lower(trigger), "!startbid")==1 ) then
+
+
+				if (WebDKP_bidInProgress == true ) then
+					WebDKP_SendWhisper(name,"There is already a bid session active - you can't start a new before the other is finished");
+				elseif ( cmd == "" or cmd == nil) then
+					WebDKP_SendWhisper(name,"You must specify an item to bid on. Ex: !startbid [Giantstalker's Helm]");
+				else	
+					WebDKP_Bid_StartBid(cmd, 0);
+					WebDKP_BidFrameBidButton:SetText("Stop bidding");
+				end
+					
+			-- THEY WANT THE BIDDING TO STOP	
+			elseif(string.find(string.lower(trigger), "!stopbid")==1 ) then
+				if (WebDKP_bidInProgress == false ) then
+					WebDKP_SendWhisper(name,"There are no active bid session to abort");
+				else
+					WebDKP_Bid_StopBid();
+					WebDKP_BidFrameBidButton:SetText("Start bidding!");
+				end
 			end
 		end
 	end
@@ -331,13 +333,13 @@ end
 -- towards web dkp bidding
 -- ================================
 function WebDKP_IsBidChat(name, trigger)
-	if ( string.find(string.lower(trigger), "!bid" )== 1 or
-		 string.find(string.lower(trigger), "!startbid" ) == 1 or 
-		 string.find(string.lower(trigger), "!stopbid" ) == 1
-		) then
-        return true
-    end
-    return false
+		if ( string.find(string.lower(trigger), "!bid" )== 1 or
+			 string.find(string.lower(trigger), "!startbid" ) == 1 or 
+			 string.find(string.lower(trigger), "!stopbid" ) == 1
+			) then
+			return true
+		end
+		return false
 end
 
 -- ================================

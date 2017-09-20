@@ -1537,9 +1537,7 @@
       </OnMouseDown>
       <OnMouseUp>
         --WebDKP_ToggleGUI();
-        PlaySound("igMainMenuOptionCheckBoxOn");
-        
-        ToggleDropDownMenu(nil, nil, this);
+		WebDKP_MinimapButton_Click()
       </OnMouseUp>
     </Scripts>
   </Button>
