@@ -1,6 +1,7 @@
 -- Sandstens fork
-SandstensForkVersion = "Version 2017-06-11"
-AutoInvitePlayers = {"Sandsten","Bernsten","Smygsten","Stenskott","Bergsten","Kylsten","Gravsten","Sandybank","Kalven","Ibanezer","Trairg","Arkemea","Tentto","Leshaniqua","Gruuz","Looz","Drooz","Larona","Pricey","Myname","Orthoron","Valkoron","Thralloron","Kalvoron","Kimono","Awsomenews","Evilmojo","Hurmelhej","Cadux","Cadex","Roxigar","Hellcow","Nakz","Kruzz","Fellsten"}
+SandstensForkVersion = "Version 2017-09-20"
+AutoInvitePlayersKronos = {"Sandsten","Bernsten","Smygsten","Stenskott","Bergsten","Kylsten","Gravsten","Eldsten","Eldstina","Sandybank","Kalven","Ibanezer","Trairg","Arkemea","Tentto","Leshaniqua","Gruuz","Looz","Drooz","Larona","Pricey","Myname","Orthoron","Valkoron","Thralloron","Kalvoron","Kimono","Awsomenews","Evilmojo","Hurmelhej","Cadux","Cadex","Roxigar","Hellcow","Nakz","Kruzz","Fellsten","Filon","Delthar"}
+AutoInviteGuildRanks = { "Class Leader","Officer","Officer Alt"}
 --
 --
 ------------------------------------------------------------------------
@@ -74,8 +75,6 @@ WebDKP_BenchTable = {}; -- Not in use ?
 
 WebDKP_BenchList = {};
 WebDKP_Bench_TotalToday = 0;
-
-WebDKP_Enabled = true; --default value enabled
 
 -- Holds the list of users tables on the site. This is used for those guilds
 -- who have multiple dkp tables for 1 guild. 
@@ -191,6 +190,8 @@ function WebDKP_OnLoad()
 	
 	WebDKP_OnEnable();
 	
+	
+	
 end
 
 -- ================================
@@ -218,7 +219,7 @@ function WebDKP_OnEnable()
 		-- for blizzard loot window
 	WebDKP_Register_ShiftClickLootWindowHook();	
 	-- start auto-inv program
-	auto_inv();				
+	auto_inv();
 
 end
 
@@ -278,20 +279,6 @@ function WebDKP_Test()
 	DEFAULT_CHAT_FRAME:AddMessage(GetZoneText());
 end
 
-function test_roster()
-	--VIRKER
-	GuildRoster()
-	local playerName = GetUnitName("target")
-	local name, rank;
-
-	for i=1, GetNumGuildMembers() do
-		name, rank, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = GetGuildRosterInfo(i);
-		if ( name == playerName) then
-			DEFAULT_CHAT_FRAME:AddMessage(name.." ("..rank..")");
-		end
-	end
-end
-
 --[[
 function auto_inv()
 	local f = CreateFrame("frame")
@@ -309,12 +296,36 @@ function auto_inv()
 	f:SetScript("OnEvent", function()
 		if(arg1 == "+") then
 			if UnitInRaid("player") then
-				for i=1,getn(AutoInvitePlayers) do
-					if (arg2==AutoInvitePlayers[i]) then
-						InviteByName(arg2)
-						PromoteToAssistant(arg2)
+				
+				local skipnext = false
+				--Kronos auto invite
+				if GetRealmName() == "Kronos" then
+					for i=1,getn(AutoInvitePlayersKronos) do
+						if (arg2==AutoInvitePlayersKronos[i]) then
+							InviteByName(arg2)
+							PromoteToAssistant(arg2)
+							skipnext = true
+						end
 					end
 				end
+				
+				--Auto invite guild members with ranks 
+				if skipnext == false then
+					for i = 1, GetNumGuildMembers() do
+						local name, rank, rankIndex, level, _, _, _, _, online = GetGuildRosterInfo(i)
+						if online and name == arg2 then
+						
+							for i=1,getn(AutoInviteGuildRanks) do
+								if (rank==AutoInviteGuildRanks[i]) then
+									InviteByName(arg2)
+									PromoteToAssistant(arg2)
+								end
+							end
+								
+						end
+					end
+				end
+				
 			end
 		end
 	end)
@@ -427,7 +438,7 @@ function WebDKP_AddEarly()
 end
 
 function WebDKP_Bosskill_Event()
-	if(WebDKP_Enabled) then
+	if(WebDKP_Options["WebDKP_Enabled"]) then
 		--if IsPartyLeader("player") then
 			local zoneName = GetZoneText();
 
@@ -509,12 +520,19 @@ function WebDKP_ADDON_LOADED()
 	WebDKP_Options_FrameToggleAutoAward:SetChecked(WebDKP_Options["AutoAwardEnabled"]);
 	WebDKP_Options_FrameToggleZeroSum:SetChecked(WebDKP_WebOptions["ZeroSumEnabled"]);
 	
-	
 	WebDKP_UpdateTableToShow(); --update who is in the table
 	WebDKP_UpdateTable();       --update the gui
 	
 	-- set the mini map position
 	WebDKP_MinimapButton_SetPositionAngle(WebDKP_Options["MiniMapButtonAngle"]);
+	
+	-- set enabled option
+	if(WebDKP_Options["WebDKP_Enabled"]) then
+		WebDKP_MinimapButton:SetNormalTexture("Interface\\AddOns\\WebDKP\\\Textures\\MinimapButton")
+	else
+		WebDKP_MinimapButton:SetNormalTexture("Interface\\AddOns\\WebDKP\\\Textures\\MinimapButton_disabled")
+	end
+	
 end
 
 
@@ -887,7 +905,7 @@ end
 -- Toggles zero sum support
 -- ================================
 function WebDKP_ToggleZeroSum()
-	-- is enabled, disable it
+	-- is g, disable it
 	if ( WebDKP_WebOptions["ZeroSumEnabled"] == 1 ) then
 		WebDKP_WebOptions["ZeroSumEnabled"] = 0;
 	-- is disabled, enable it
@@ -924,6 +942,19 @@ function WebDKP_MinimapButton_MouseDown()
 	
 	WebDKP_MinimapButton.CenterStartX = vCenterX - vMinimapCenterX;
 	WebDKP_MinimapButton.CenterStartY = vCenterY - vMinimapCenterY;
+end
+
+function WebDKP_MinimapButton_Click()
+	if IsShiftKeyDown() then
+		PlaySound("igMiniMapOpen");
+		WebDKP_AutoAwardToggle();
+		GameTooltip:Hide()
+		WebDKP_MinimapLoadTooltip()
+		GameTooltip:Show()
+	else
+		PlaySound("igMainMenuOptionCheckBoxOn");
+		ToggleDropDownMenu(nil, nil, this);
+	end
 end
 
 -- ================================
@@ -1043,20 +1074,9 @@ function WebDKP_MinimapButton_SetPositionAngle(pAngle)
 	WebDKP_MinimapButton:SetPoint("CENTER", "Minimap", "CENTER", vCenterX - 1, vCenterY - 1);
 	WebDKP_MinimapButton:SetFrameStrata("MEDIUM")
 	
-	
-
-	
 	--sandsten add a tooltip showing version
 	WebDKP_MinimapButton:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(WebDKP_MinimapButton, "ANCHOR_LEFT");
-		GameTooltip:SetText("WebDKP");
-		GameTooltip:AddLine("Sandstens fork",1,1,1);
-		GameTooltip:AddLine(SandstensForkVersion,1,1,1);
-		if(WebDKP_Enabled) then
-			GameTooltip:AddLine("AutoAward bosskills is Enabled",0,1,0);
-		else
-			GameTooltip:AddLine("AutoAward bosskills is Disabled",1,0,0);
-		end
+		WebDKP_MinimapLoadTooltip()
 		GameTooltip:Show()
 	end)
 	
@@ -1066,6 +1086,18 @@ function WebDKP_MinimapButton_SetPositionAngle(pAngle)
 	
 	WebDKP_Options["MiniMapButtonAngle"] = vAngle;
 	--gOutfitter_Settings.Options.MinimapButtonAngle = vAngle;
+end
+
+function WebDKP_MinimapLoadTooltip()
+		GameTooltip:SetOwner(WebDKP_MinimapButton, "ANCHOR_LEFT");
+		GameTooltip:SetText("WebDKP");
+		GameTooltip:AddLine("Sandstens fork",1,1,1);
+		GameTooltip:AddLine(SandstensForkVersion,1,1,1);
+		if(WebDKP_Options["WebDKP_Enabled"]) then
+			GameTooltip:AddLine("WebDKP Enabled - will award DKP for bosskills.",0,1,0);
+		else
+			GameTooltip:AddLine("WebDKP Disabled - will NOT award DKP for bosskills",1,0,0);
+		end
 end
 
 -- ================================
@@ -1091,13 +1123,13 @@ end
 -- Adds buttons to the minimap drop down
 -- ================================
 function WebDKP_MinimapDropDown_Initialize()
+	WebDKP_Add_MinimapDropDownItem("Toggle WebDKP - On/Off",WebDKP_AutoAwardToggle);
 	WebDKP_Add_MinimapDropDownItem("DKP Table",WebDKP_ToggleGUI);
 	WebDKP_Add_MinimapDropDownItem("Bidding",WebDKP_Bid_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Bench (beta-broken)",WebDKP_Bench_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Add decay flat",WebDKP_GiveoutDecayDialogBox_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Fix Negative DKP",WebDKP_FixNegative_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Morale boost!",WebDKP_MoraleBoost);
-	WebDKP_Add_MinimapDropDownItem("AutoAward bosskill - On/Off",WebDKP_AutoAwardToggle);
 	--WebDKP_Add_MinimapDropDownItem("Help",WebDKP_ToggleGUI);
 end
 
@@ -1106,13 +1138,13 @@ function WebDKP_MoraleBoost()
 end
 
 function WebDKP_AutoAwardToggle()
-	if(WebDKP_Enabled) then
-		WebDKP_Enabled = false
-		WebDKP_Print("AutoAward for bosskill is now disabled.")
+	if(WebDKP_Options["WebDKP_Enabled"]) then
+		WebDKP_Options["WebDKP_Enabled"] = false
+		WebDKP_Print("WebDKP Disabled - will NOT award DKP for bosskills")
 		WebDKP_MinimapButton:SetNormalTexture("Interface\\AddOns\\WebDKP\\\Textures\\MinimapButton_disabled")
 	else
-		WebDKP_Enabled = true
-		WebDKP_Print("AutoAward for bosskill is now enabled.")
+		WebDKP_Options["WebDKP_Enabled"] = true
+		WebDKP_Print("WebDKP Enabled - will award DKP for bosskills.")
 		WebDKP_MinimapButton:SetNormalTexture("Interface\\AddOns\\WebDKP\\\Textures\\MinimapButton")
 	end
 end
