@@ -263,7 +263,7 @@
             </Anchor>
           </Anchors>
         </Texture>
-        <FontString name="$parentTitle" inherits="GameFontNormal" text="WebDKP v2.7">
+        <FontString name="$parentTitle" inherits="GameFontNormal" text="WebDKP Sandsten fork">
           <Anchors>
             <Anchor point="TOP" relativeTo="$parentHeaderTexture">
               <Offset>

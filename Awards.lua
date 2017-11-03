@@ -71,6 +71,121 @@ function WebDKP_GiveOutDecayToAll(cost)
 	end
 end
 
+--[[
+---Sandsten added to give out decay PERCENTAGE easily
+function WebDKP_GiveOutDecayPercentageTESTToAll(cost)
+	if cost ~= nil then
+		local reason = "Decay " .. cost .. "% of total"
+		local decay = cost * -1
+		local player = WebDKP_GetAllPlayers()
+		local numPlayers = table.getn(player)
+
+		if ( player == nil) then
+			WebDKP_Print("No player on DKP list --> No decay given.")
+			PlaySound("igQuestFailed")
+		else
+			
+			for i=0, numPlayers, 1 do
+				
+				WebDKP_Bench_AddDKP(player[i]["name"], decay, reason);
+			end
+			DEFAULT_CHAT_FRAME:AddMessage("Added Decay ( "..decay.." DKP ) to "..numPlayers.." players.")
+
+			-- Update the table so we can see the new dkp status
+			WebDKP_UpdateTableToShow()
+			WebDKP_UpdateTable()
+		end
+	end
+end
+--]]
+
+---Sandsten added to give out decay PERCENTAGE easily  this is NOT working
+--[[
+function WebDKP_GiveOutDecayPercentageToAll(cost)
+	
+	if cost ~= nil then
+		local reason = "Decay " .. cost .. "percent of total"
+		--local decay = tonumber(cost) * -1
+		local player = WebDKP_GetAllPlayers()
+		local numPlayers = table.getn(player)
+
+		if ( player == nil) then
+			WebDKP_Print("No player on DKP list --> No decay given.")
+			PlaySound("igQuestFailed")
+		else
+			
+			rate = tonumber(cost)
+			
+			if rate>1 or rate<=0 then
+				WebDKP_Print("Bad decay cost. Cost should be within 0 to 100. Use 10 to apply a 10% reduction for example.");
+				return;
+			end
+			
+			local tableid = WebDKP_GetTableid();
+			
+			for k, v in pairs(WebDKP_DkpTable) do
+				if ( type(v) == "table" and v["dkp_"..tableid] >= 1) then
+					player[0] = {
+							["name"] = k,
+							["class"] = v["class"],
+						};
+					WebDKP_AddDKP((ceil(v["dkp_"..tableid]*rate)*(-1)), k.." decay", "false", player)	
+				end	
+				
+			end
+
+			-- Update the table so we can see the new dkp status
+			WebDKP_UpdateTableToShow()
+			WebDKP_UpdateTable()
+		end
+	end
+end
+--]]
+
+
+function WebDKP_GiveOutDecayPercentageToAll(decaypercent)
+	if decaypercent ~= nil then
+		local reason = "Decay "..decaypercent.." percent"
+		local player = WebDKP_GetAllPlayers()
+		local numPlayers = table.getn(player)
+
+		if ( player == nil) then
+			WebDKP_Print("No player on DKP list --> No decay given.")
+			PlaySound("igQuestFailed")
+		else
+			
+			for i=0, numPlayers, 1 do
+				
+
+				local dkpCurrent = WebDKP_GetDKP(player[i]["name"]);
+				--local toAward = -1 * dkpCurrent;
+				
+				--if(dkpCurrent < 0) then
+				--	WebDKP_AddDKPflat(toAward, reason, "false", player[i]["name"], i)
+				--	WebDKP_UpdateTable();
+				--	count = count + 1;
+				--end
+				
+				if (dkpCurrent > 0) then
+					dkpToSubtract = dkpCurrent * decaypercent * 0.01
+					local toAward = ceil(-1 * dkpToSubtract)
+					WebDKP_AddDKPflat(toAward, reason, "false", player[i]["name"], i)
+					
+				end
+				
+				--WebDKP_AddDKPflat(toAward, reason, "false", player[i]["name"], i)
+				
+			end
+			DEFAULT_CHAT_FRAME:AddMessage("Subtracted decay of "..decaypercent.." percent to "..numPlayers.." players.")
+
+			-- Update the table so we can see the new dkp status
+			WebDKP_UpdateTableToShow()
+			WebDKP_UpdateTable()
+		end
+	end
+end
+
+
 function WebDKP_DecayToAll()
 	local reason = "DECAY";
 	local cost = WebDKP_Bench_TotalToday * 0.2;

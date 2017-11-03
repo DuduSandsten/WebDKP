@@ -1,5 +1,5 @@
 -- Sandstens fork
-SandstensForkVersion = "Version 2017-09-20"
+SandstensForkVersion = "Version 2017-11-03"
 AutoInvitePlayersKronos = {"Sandsten","Bernsten","Smygsten","Stenskott","Bergsten","Kylsten","Gravsten","Eldsten","Eldstina","Sandybank","Kalven","Ibanezer","Trairg","Arkemea","Tentto","Leshaniqua","Gruuz","Looz","Drooz","Larona","Pricey","Myname","Orthoron","Valkoron","Thralloron","Kalvoron","Kimono","Awsomenews","Evilmojo","Hurmelhej","Cadux","Cadex","Roxigar","Hellcow","Nakz","Kruzz","Fellsten","Filon","Delthar"}
 AutoInviteGuildRanks = { "Class Leader","Officer","Officer Alt"}
 --
@@ -143,8 +143,6 @@ NAXX = Set {"Anub'Rekhan", "Grand Widow Faerlina", "Maexxna",
         "Instructor Razuvious", "Gothik the Harvester", "The Four Horsemen",
         "Patchwerk", "Grobbulus", "Gluth", "Thaddius",
     	"Sapphiron", "Kel'Thuzad"}
-
-test_loc = Set {"Elder Mottled Boar"}
 
 BossLocation = Set {"Durotar", "The Molten Core", "Blackwing Lair", "Onyxia's Lair", "Ahn'Qiraj", "Temple of Ahn'Qiraj", "Naxxramas", "The Arachnid Quarter", "The Plague Quarter", "The Military Quarter", "The Construct Quarter", "Frostwyrm Lair"}
 
@@ -347,7 +345,7 @@ end
 --Sandsten giveout decay to all
 function WebDKP_GiveoutDecayDialogBox_ToggleUI()
 	StaticPopupDialogs["GIVEOUT_DKP_TO_ALL_PROMPT"] = {
-		text = "How much decay do you want to subtract?\n\nThis will subtract from every player.\n If this results in negative DKP the players total will be set to zero.",
+		text = "How much decay do you want to subtract?\n\nThis will subtract from EVERY player.\n If this results in negative DKP the players total will be set to zero.",
 	  	button1 = "Confirm",
 	  	button2 = "Cancel",
 		
@@ -375,6 +373,36 @@ function WebDKP_GiveoutDecayDialogBox_ToggleUI()
 	StaticPopup_Show ("GIVEOUT_DKP_TO_ALL_PROMPT")
 end
 
+--Sandsten giveout decay percentage to all
+function WebDKP_GiveoutDecayPercentageDialogBox_ToggleUI()
+	StaticPopupDialogs["GIVEOUT_DKP_PERCENTAGE_TO_ALL_PROMPT"] = {
+		text = "How much percentage (rounded up) do you want to subtract?\n\nThis will subtract from EVERY player.",
+	  	button1 = "Confirm",
+	  	button2 = "Cancel",
+		
+		OnShow = function()
+			getglobal(this:GetName().."EditBox"):SetFocus()
+			getglobal(this:GetName().."EditBox"):SetText("10")
+			getglobal(this:GetName().."EditBox"):HighlightText()
+		end,
+		
+	  	OnAccept = function()
+			local text = getglobal(this:GetParent():GetName().."EditBox"):GetText()
+			if text ~= "" then
+				-- Do Decay before clearing bench aka total dkp today
+				WebDKP_GiveOutDecayPercentageToAll(text)
+				-- Set all players with negative DKP to 0 
+				WebDKP_FixNegative()
+			end
+	  	end,
+	  	timeout = 0,
+	  	hasEditBox = true,
+	  	whileDead = true,
+	  	hideOnEscape = true,
+	  	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
+	StaticPopup_Show ("GIVEOUT_DKP_PERCENTAGE_TO_ALL_PROMPT")
+end
 
 function WebDKP_Bosskill()
 	StaticPopupDialogs["HANDOUT_BOSSDKP_PROMPT"] = {
@@ -450,7 +478,7 @@ function WebDKP_Bosskill_Event()
 			end
 
 			if BossLocation[zoneName] then
-				if (MC[name] or BWL[name] or name == "Onyxia" or AQ[name] or NAXX[name] or test_loc[name])then
+				if (MC[name] or BWL[name] or name == "Onyxia" or AQ[name] or NAXX[name])then
 					WebDKP_Bosskill_Add_DKP();
 					--WebDKP_Bench_Add_DKP();
 					--DEFAULT_CHAT_FRAME:AddMessage("test, ADDING DKP 5 all raid! yey")
@@ -1095,8 +1123,10 @@ function WebDKP_MinimapLoadTooltip()
 		GameTooltip:AddLine(SandstensForkVersion,1,1,1);
 		if(WebDKP_Options["WebDKP_Enabled"]) then
 			GameTooltip:AddLine("WebDKP Enabled - will award DKP for bosskills.",0,1,0);
+			GameTooltip:AddLine("Shift click to toggle.",1,1,1);
 		else
 			GameTooltip:AddLine("WebDKP Disabled - will NOT award DKP for bosskills",1,0,0);
+			GameTooltip:AddLine("Shift click to toggle.",1,1,1);
 		end
 end
 
@@ -1123,11 +1153,12 @@ end
 -- Adds buttons to the minimap drop down
 -- ================================
 function WebDKP_MinimapDropDown_Initialize()
-	WebDKP_Add_MinimapDropDownItem("Toggle WebDKP - On/Off",WebDKP_AutoAwardToggle);
+	WebDKP_Add_MinimapDropDownItem("WebDKP Enabled - Award Automatically",WebDKP_AutoAwardToggle, WebDKP_Options["WebDKP_Enabled"]);
 	WebDKP_Add_MinimapDropDownItem("DKP Table",WebDKP_ToggleGUI);
 	WebDKP_Add_MinimapDropDownItem("Bidding",WebDKP_Bid_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Bench (beta-broken)",WebDKP_Bench_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Add decay flat",WebDKP_GiveoutDecayDialogBox_ToggleUI);
+	WebDKP_Add_MinimapDropDownItem("Add decay percentage",WebDKP_GiveoutDecayPercentageDialogBox_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Fix Negative DKP",WebDKP_FixNegative_ToggleUI);
 	WebDKP_Add_MinimapDropDownItem("Morale boost!",WebDKP_MoraleBoost);
 	--WebDKP_Add_MinimapDropDownItem("Help",WebDKP_ToggleGUI);
@@ -1153,8 +1184,9 @@ end
 -- Helper method that adds individual entries into the minimap drop down
 -- menu.
 -- ================================
-function WebDKP_Add_MinimapDropDownItem(text, eventHandler)
+function WebDKP_Add_MinimapDropDownItem(text, eventHandler, checked)
 	local info = { };
+	if checked then info.checked = true end
 	info.text = text;
 	info.value = text; 
 	info.owner = this;
