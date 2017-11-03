@@ -31,6 +31,9 @@ To start dkp bidding
 SANDSTEN CHANGELOG
 ~~~~~~~~~~~~~~~~~~~~~~
 
+2017-11-03
+  Added option to add percentage based decay
+
 2017-09-20
   !startbid commands were not being ignored when disabling. Fixed
   Added auto invite feature to automatically invite guild members with the rank "Officer", "Class Leader" or "Officer alt".
